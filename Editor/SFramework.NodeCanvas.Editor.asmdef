@@ -1,0 +1,20 @@
+{
+    "name": "SFramework.NodeCanvas.Editor",
+    "rootNamespace": "SFramework.NodeCanvas.Editor",
+    "references": [
+        "ParadoxNotion",
+        "SFramework.Core.Runtime",
+        "SFramework.NodeCanvas.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "NODE_CANVAS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

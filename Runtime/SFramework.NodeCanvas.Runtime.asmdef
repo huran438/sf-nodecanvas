@@ -1,0 +1,19 @@
+{
+    "name": "SFramework.NodeCanvas.Runtime",
+    "rootNamespace": "SFramework.NodeCanvas.Runtime",
+    "references": [
+        "ParadoxNotion",
+        "SFramework.Core.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "NODE_CANVAS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
