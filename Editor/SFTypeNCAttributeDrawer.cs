@@ -15,7 +15,7 @@ namespace SFramework.NodeCanvas.Editor
 
         private bool CheckAndLoadDatabase(Type databaseType)
         {
-            if (_database != null) return true;
+            if (_database != null && _database.GetType() == databaseType) return true;
 
             var typeName = databaseType.Name;
 
