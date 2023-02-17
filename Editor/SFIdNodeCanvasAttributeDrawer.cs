@@ -12,14 +12,14 @@ using SFEditorExtensions = SFramework.Repositories.Editor.SFEditorExtensions;
 
 namespace SFramework.NodeCanvas.Editor
 {
-    public class SFTypeNCAttributeDrawer : AttributeDrawer<SFTypeNCAttribute>
+    public class SFIdNodeCanvasAttributeDrawer : AttributeDrawer<SFIdNodeCanvasAttribute>
     {
-        private HashSet<ISFRepository> _repositories;
+        private HashSet<ISFRepository> _repositories = new HashSet<ISFRepository>();
 
         private bool CheckAndLoadDatabase(Type type)
         {
             if (_repositories.Count != 0) return true;
-            _repositories = SFEditorExtensions.FindRepositories(type);
+            _repositories = SFEditorExtensions.FindRepositories(type); 
             return _repositories.Count != 0;
         }
 
@@ -31,7 +31,7 @@ namespace SFramework.NodeCanvas.Editor
             var value = (string)instance;
 
             var sfTypeAttribute =
-                fieldInfo.GetCustomAttributes(typeof(SFTypeNCAttribute), false)[0] as SFTypeNCAttribute;
+                fieldInfo.GetCustomAttributes(typeof(SFIdNodeCanvasAttribute), false)[0] as SFIdNodeCanvasAttribute;
             if (!CheckAndLoadDatabase(sfTypeAttribute.Type)) return MoveNextDrawer();
 
             if (string.IsNullOrWhiteSpace(value))
