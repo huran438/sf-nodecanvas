@@ -3,7 +3,8 @@
     "rootNamespace": "SFramework.NodeCanvas.Runtime",
     "references": [
         "ParadoxNotion",
-        "SFramework.Core.Runtime"
+        "SFramework.Core.Runtime",
+        "SFramework.Repositories.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

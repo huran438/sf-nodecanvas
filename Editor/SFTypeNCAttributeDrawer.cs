@@ -2,36 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ParadoxNotion.Design;
+using SFramework.Core.Editor;
 using SFramework.Core.Runtime;
 using SFramework.NodeCanvas.Runtime;
+using SFramework.Repositories.Runtime;
 using UnityEditor;
 using UnityEngine;
+using SFEditorExtensions = SFramework.Repositories.Editor.SFEditorExtensions;
 
 namespace SFramework.NodeCanvas.Editor
 {
     public class SFTypeNCAttributeDrawer : AttributeDrawer<SFTypeNCAttribute>
     {
-        private ISFDatabase _database;
+        private HashSet<ISFRepository> _repositories;
 
-        private bool CheckAndLoadDatabase(Type databaseType)
+        private bool CheckAndLoadDatabase(Type type)
         {
-            if (_database != null && _database.GetType() == databaseType) return true;
-
-            var typeName = databaseType.Name;
-
-            var assetsGuids = AssetDatabase.FindAssets($"t:{typeName}");
-
-            if (assetsGuids == null || assetsGuids.Length == 0)
-            {
-                Debug.LogWarning($"Missing Database: {typeName}");
-                return false;
-            }
-
-            var path = AssetDatabase.GUIDToAssetPath(assetsGuids.First());
-            _database = AssetDatabase.LoadAssetAtPath(path, databaseType) as ISFDatabase;
-
-            return _database != null;
+            if (_repositories.Count != 0) return true;
+            _repositories = SFEditorExtensions.FindRepositories(type);
+            return _repositories.Count != 0;
         }
+
 
         public override object OnGUI(GUIContent content, object instance)
         {
@@ -41,16 +32,24 @@ namespace SFramework.NodeCanvas.Editor
 
             var sfTypeAttribute =
                 fieldInfo.GetCustomAttributes(typeof(SFTypeNCAttribute), false)[0] as SFTypeNCAttribute;
-            if (!CheckAndLoadDatabase(sfTypeAttribute.DatabaseType)) return MoveNextDrawer();
+            if (!CheckAndLoadDatabase(sfTypeAttribute.Type)) return MoveNextDrawer();
 
             if (string.IsNullOrWhiteSpace(value))
             {
                 value = string.Empty;
             }
-            
+
             var paths = new List<string> { "-" };
-            _database.Nodes.FindAllPaths(out var ids, sfTypeAttribute.TargetLayer);
-            paths.AddRange(ids);
+
+            foreach (var repository in _repositories)
+            {
+                repository.Nodes.FindAllPaths(out var ids, sfTypeAttribute.Indent);
+                
+                foreach (var id in ids)
+                {
+                    paths.Add($"{repository._Name}/{id}");
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(value) && !paths.Contains(value))
             {

@@ -6,14 +6,14 @@ namespace SFramework.NodeCanvas.Runtime
     [AttributeUsage(AttributeTargets.Field)]
     public class SFTypeNCAttribute : DrawerAttribute
     {
-        public SFTypeNCAttribute(Type databaseType, int targetLayer = -1)
+        public SFTypeNCAttribute(Type type, int indent = -1)
         {
-            DatabaseType = databaseType;
-            TargetLayer = targetLayer;
+            Type = type;
+            Indent = indent;
         }
 
-        public readonly Type DatabaseType;
-        public readonly int TargetLayer;
+        public readonly Type Type;
+        public readonly int Indent;
 
     }
 }
