@@ -9,7 +9,9 @@
         "SFramework.Repositories.Runtime",
         "SFramework.Repositories.Editor"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
