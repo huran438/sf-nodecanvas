@@ -14,7 +14,7 @@ namespace SFramework.NodeCanvas.Editor
 {
     public class SFIdNodeCanvasAttributeDrawer : AttributeDrawer<SFIdNodeCanvasAttribute>
     {
-        private HashSet<ISFRepository> _repositories = new HashSet<ISFRepository>();
+        private HashSet<ISFRepository> _repositories = new();
 
         private bool CheckAndLoadDatabase(Type type)
         {
