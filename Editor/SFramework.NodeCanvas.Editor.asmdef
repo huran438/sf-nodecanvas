@@ -7,7 +7,8 @@
         "SFramework.NodeCanvas.Runtime",
         "SFramework.Core.Editor",
         "SFramework.Repositories.Runtime",
-        "SFramework.Repositories.Editor"
+        "SFramework.Repositories.Editor",
+        "NodeCanvas"
     ],
     "includePlatforms": [
         "Editor"
@@ -18,7 +19,7 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "NODE_CANVAS"
+        "NODECANVAS"
     ],
     "versionDefines": [],
     "noEngineReferences": false

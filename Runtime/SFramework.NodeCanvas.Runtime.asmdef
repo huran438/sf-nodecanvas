@@ -4,16 +4,19 @@
     "references": [
         "ParadoxNotion",
         "SFramework.Core.Runtime",
-        "SFramework.Repositories.Runtime"
+        "SFramework.Repositories.Runtime",
+        "NodeCanvas"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        ""
+    ],
     "autoReferenced": true,
     "defineConstraints": [
-        "NODE_CANVAS"
+        "NODECANVAS"
     ],
     "versionDefines": [],
     "noEngineReferences": false
