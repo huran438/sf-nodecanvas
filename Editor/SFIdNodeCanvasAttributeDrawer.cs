@@ -2,26 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ParadoxNotion.Design;
-using SFramework.Core.Editor;
-using SFramework.Core.Runtime;
+using SFramework.Configs.Editor;
+using SFramework.Configs.Runtime;
 using SFramework.NodeCanvas.Runtime;
-using SFramework.Repositories.Runtime;
 using UnityEditor;
 using UnityEngine;
-using SFEditorExtensions = SFramework.Repositories.Editor.SFEditorExtensions;
 
 namespace SFramework.NodeCanvas.Editor
 {
     public class SFIdNodeCanvasAttributeDrawer : AttributeDrawer<SFIdNodeCanvasAttribute>
     {
         private int hash;
-        private HashSet<ISFRepository> _repositories = new();
+        private HashSet<ISFConfig> _repositories = new();
 
         private bool CheckAndLoadDatabase(Type type, object instance)
         {
             if (instance == null) return false;
             if (instance.GetHashCode() == hash && _repositories.Count != 0) return true;
-            _repositories = SFEditorExtensions.FindRepositories(type);
+            _repositories = SFConfigsEditorExtensions.FindRepositories(type);
             hash = instance.GetHashCode();
             return _repositories.Count != 0;
         }

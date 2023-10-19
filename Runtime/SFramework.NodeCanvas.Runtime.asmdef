@@ -4,7 +4,7 @@
     "references": [
         "ParadoxNotion",
         "SFramework.Core.Runtime",
-        "SFramework.Repositories.Runtime",
+        "SFramework.Configs.Runtime",
         "NodeCanvas"
     ],
     "includePlatforms": [],

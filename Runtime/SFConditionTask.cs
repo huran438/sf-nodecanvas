@@ -7,7 +7,7 @@ namespace SFramework.NodeCanvas.Runtime
     {
         protected override string OnInit()
         {
-            SFContextRoot.Container.Inject(this);
+            this.Inject();
             return base.OnInit();
         }
 
@@ -21,7 +21,7 @@ namespace SFramework.NodeCanvas.Runtime
     {
         protected override string OnInit()
         {
-            SFContextRoot.Container.Inject(this);
+            this.Inject();
             return base.OnInit();
         }
 

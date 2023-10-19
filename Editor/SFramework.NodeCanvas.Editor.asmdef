@@ -6,8 +6,8 @@
         "SFramework.Core.Runtime",
         "SFramework.NodeCanvas.Runtime",
         "SFramework.Core.Editor",
-        "SFramework.Repositories.Runtime",
-        "SFramework.Repositories.Editor",
+        "SFramework.Configs.Runtime",
+        "SFramework.Configs.Editor",
         "NodeCanvas"
     ],
     "includePlatforms": [
