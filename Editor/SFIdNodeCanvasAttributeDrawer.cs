@@ -46,11 +46,11 @@ namespace SFramework.NodeCanvas.Editor
 
             foreach (var repository in _repositories)
             {
-                repository.Nodes.FindAllPaths(out var ids, sfTypeAttribute.Indent);
+                repository.Children.FindAllPaths(out var ids, sfTypeAttribute.Indent);
 
                 foreach (var id in ids)
                 {
-                    paths.Add($"{repository.Name}/{id}");
+                    paths.Add($"{repository.Id}/{id}");
                 }
             }
 
