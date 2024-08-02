@@ -13,13 +13,13 @@ namespace SFramework.NodeCanvas.Editor
     public class SFIdNodeCanvasAttributeDrawer : AttributeDrawer<SFIdNodeCanvasAttribute>
     {
         private int hash;
-        private HashSet<ISFConfig> _repositories = new();
+        private HashSet<ISFNodesConfig> _repositories = new();
 
         private bool CheckAndLoadDatabase(Type type, object instance)
         {
             if (instance == null) return false;
             if (instance.GetHashCode() == hash && _repositories.Count != 0) return true;
-            _repositories = SFConfigsEditorExtensions.FindRepositories(type);
+            _repositories = SFConfigsEditorExtensions.FindConfigs<ISFNodesConfig>(type);
             hash = instance.GetHashCode();
             return _repositories.Count != 0;
         }
