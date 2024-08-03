@@ -12,69 +12,88 @@ namespace SFramework.NodeCanvas.Editor
 {
     public class SFIdNodeCanvasAttributeDrawer : AttributeDrawer<SFIdNodeCanvasAttribute>
     {
-        private int hash;
-        private HashSet<ISFNodesConfig> _repositories = new();
+        private int _hash;
+        private readonly HashSet<ISFNodesConfig> _configs = new();
+        private readonly List<string> _paths = new List<string>();
 
-        private bool CheckAndLoadDatabase(Type type, object instance)
+        private bool CheckAndLoadDatabase(Type type, object inst)
         {
-            if (instance == null) return false;
-            if (instance.GetHashCode() == hash && _repositories.Count != 0) return true;
-            _repositories = SFConfigsEditorExtensions.FindConfigs<ISFNodesConfig>(type);
-            hash = instance.GetHashCode();
-            return _repositories.Count != 0;
+            if (inst == null) return false;
+            if (inst.GetHashCode() == _hash && _configs.Count != 0) return true;
+            
+            foreach (var config in SFConfigsEditorExtensions.FindConfigsCached(type))
+            {
+                if (config is ISFNodesConfig nodesConfig)
+                {
+                    _configs.Add(nodesConfig);
+                }
+            }
+            
+            _hash = inst.GetHashCode();
+            return _configs.Count != 0;
         }
 
 
-        public override object OnGUI(GUIContent content, object instance)
+        public override object OnGUI(GUIContent cont, object inst)
         {
-            if (instance == null) return string.Empty;
+            if (inst == null) return MoveNextDrawer();
             if (fieldInfo.FieldType != typeof(string)) return MoveNextDrawer();
 
 
-            var value = (string)instance;
+            var value = (string)inst;
 
-            var sfTypeAttribute =
-                fieldInfo.GetCustomAttributes(typeof(SFIdNodeCanvasAttribute), false)[0] as SFIdNodeCanvasAttribute;
-            if (!CheckAndLoadDatabase(sfTypeAttribute.Type, instance)) return MoveNextDrawer();
+            var sfTypeAttribute = fieldInfo.GetCustomAttributes(typeof(SFIdNodeCanvasAttribute), false)[0] as SFIdNodeCanvasAttribute;
+
+            if (sfTypeAttribute == null) return MoveNextDrawer();
+            
+            if (!CheckAndLoadDatabase(sfTypeAttribute.Type, inst)) return MoveNextDrawer();
 
             if (string.IsNullOrWhiteSpace(value))
             {
                 value = string.Empty;
             }
 
-            var paths = new List<string> { "-" };
+            _paths.Clear();
+            _paths.Add("-");
 
-            foreach (var repository in _repositories)
+            foreach (var config in _configs)
             {
-                repository.Children.FindAllPaths(out var ids, sfTypeAttribute.Indent);
-
-                foreach (var id in ids)
+                config.Children.FindAllPaths(out var ids, sfTypeAttribute.Indent);
+                
+                if (sfTypeAttribute.Indent == 0)
                 {
-                    paths.Add($"{repository.Id}/{id}");
+                    _paths.Add(config.Id);
+                }
+                else
+                {
+                    foreach (var id in ids)
+                    {
+                        _paths.Add(string.Join("/", config.Id, id));
+                    }
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(value) && !paths.Contains(value))
+            if (!string.IsNullOrWhiteSpace(value) && !_paths.Contains(value))
             {
-                return EditorGUILayout.TextField(content, value);
+                return EditorGUILayout.TextField(cont, value);
             }
 
-            var name = paths.Contains(value)
+            var name = _paths.Contains(value)
                 ? value
-                : paths[0];
+                : _paths[0];
 
-            var _index = paths.IndexOf(name);
+            var index = _paths.IndexOf(name);
 
-            if (_index == 0)
+            if (index == 0)
             {
                 GUI.backgroundColor = Color.red;
             }
 
-            _index = EditorGUILayout.Popup(content, _index, paths.ToArray());
+            index = EditorGUILayout.Popup(cont, index, _paths.ToArray());
 
             GUI.backgroundColor = Color.white;
 
-            return _index == 0 ? string.Empty : paths.ElementAt(_index);
+            return index == 0 ? string.Empty : _paths.ElementAt(index);
         }
     }
 }
