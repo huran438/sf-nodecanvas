@@ -21,7 +21,7 @@ namespace SFramework.NodeCanvas.Editor
             if (inst == null) return false;
             if (inst.GetHashCode() == _hash && _configs.Count != 0) return true;
             
-            foreach (var config in SFConfigsEditorExtensions.FindConfigsCached(type))
+            foreach (var config in SFConfigsEditorExtensions.FindConfigs<ISFNodesConfig>(type))
             {
                 if (config is ISFNodesConfig nodesConfig)
                 {
