@@ -23,10 +23,7 @@ namespace SFramework.NodeCanvas.Editor
             
             foreach (var config in SFConfigsEditorExtensions.FindConfigs<ISFNodesConfig>(type))
             {
-                if (config is ISFNodesConfig nodesConfig)
-                {
-                    _configs.Add(nodesConfig);
-                }
+                _configs.Add(config);
             }
             
             _hash = inst.GetHashCode();
@@ -36,7 +33,7 @@ namespace SFramework.NodeCanvas.Editor
 
         public override object OnGUI(GUIContent cont, object inst)
         {
-            if (inst == null) return MoveNextDrawer();
+            if (inst == null) return string.Empty;
             if (fieldInfo.FieldType != typeof(string)) return MoveNextDrawer();
 
 
