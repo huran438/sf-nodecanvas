@@ -12,7 +12,7 @@ namespace SFramework.NodeCanvas.Runtime
         }
 
         [SFInject]
-        protected virtual void Init(ISFContainer container)
+        protected virtual void Init()
         {
             
         }
@@ -28,7 +28,7 @@ namespace SFramework.NodeCanvas.Runtime
 
 
         [SFInject]
-        protected virtual void Init(ISFContainer container)
+        protected virtual void Init()
         {
             
         }
