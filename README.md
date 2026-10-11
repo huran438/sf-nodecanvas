@@ -2,8 +2,6 @@
 
 # SF NodeCanvas
 
-[Documentation website](https://docs.secretplace.studio/#sf-nodecanvas)
-
 SFramework dependency injection for NodeCanvas action and condition tasks, plus a configuration ID selector for the NodeCanvas task inspector. Derive your custom task from an SF base class to inject its dependencies when NodeCanvas initializes it.
 
 Package: `sp.sframework.nodecanvas` · Version: `0.1.0` · [MIT license](LICENSE.md)
