@@ -1,9 +1,9 @@
-﻿using NodeCanvas.Framework;
+using NodeCanvas.Framework;
 using SFramework.Core.Runtime;
 
 namespace SFramework.NodeCanvas.Runtime
 {
-    public abstract class SFConditionTask<T> : ConditionTask<T>, ISFInjectable where T : class
+    public abstract partial class SFConditionTask<T> : ConditionTask<T>, ISFInjectable, ISFInjectionCallback where T : class
     {
         protected override string OnInit()
         {
@@ -11,13 +11,14 @@ namespace SFramework.NodeCanvas.Runtime
             return base.OnInit();
         }
 
-        [SFInject]
+        void ISFInjectionCallback.OnDependenciesInjected() => Init();
+
         protected virtual void Init()
         {
         }
     }
 
-    public abstract class SFConditionTask : ConditionTask, ISFInjectable
+    public abstract partial class SFConditionTask : ConditionTask, ISFInjectable, ISFInjectionCallback
     {
         protected override string OnInit()
         {
@@ -25,7 +26,8 @@ namespace SFramework.NodeCanvas.Runtime
             return base.OnInit();
         }
 
-        [SFInject]
+        void ISFInjectionCallback.OnDependenciesInjected() => Init();
+
         protected virtual void Init()
         {
             

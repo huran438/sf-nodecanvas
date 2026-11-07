@@ -1,0 +1,27 @@
+{
+  "name": "SFramework.NodeCanvas.Editor.Tests",
+  "rootNamespace": "SFramework.NodeCanvas.Editor.Tests",
+  "references": [
+    "SFramework.NodeCanvas.Runtime",
+    "SFramework.Core.Runtime",
+    "ParadoxNotion",
+    "NodeCanvas"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS",
+    "NODECANVAS"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

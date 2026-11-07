@@ -3,7 +3,7 @@
   "name": "sp.sframework.nodecanvas",
   "displayName": "SF NodeCanvas",
   "version": "0.1.0",
-  "unity": "2019.4",
+  "unity": "6000.0",
   "description": "Node Canvas Module",
   "keywords": [
     "nodecanvas",
@@ -11,6 +11,9 @@
     "di"
   ],
   "category": "SFramework",
-  "dependencies": {},
+  "dependencies": {
+    "sp.sframework.core": "0.2.0",
+    "sp.sframework.configs": "1.0.0"
+  },
   "type": "library"
 }

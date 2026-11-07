@@ -2,19 +2,13 @@
 
 # SF NodeCanvas
 
+![Package](https://img.shields.io/badge/UPM-sp.sframework.nodecanvas-5865f2) ![Version](https://img.shields.io/badge/version-0.1.0-5865f2)
+
+## Overview
+
 SFramework dependency injection for NodeCanvas action and condition tasks, plus a configuration ID selector for the NodeCanvas task inspector. Derive your custom task from an SF base class to inject its dependencies when NodeCanvas initializes it.
 
-Package: `sp.sframework.nodecanvas` · Version: `0.1.0` · [MIT license](LICENSE.md)
-
-[Install](#install) · [Task initialization](#task-initialization) · [Example action](#example-action) · [Configuration IDs](#configuration-ids) · [API](#api) · [Limits](#limits-and-troubleshooting)
-
-## Install
-
-In Unity's Package Manager, choose **Add package from git URL** and enter:
-
-```text
-https://github.com/huran438/sf-nodecanvas.git#main
-```
+## Requirements
 
 Install the requirements in the same Unity project:
 
@@ -24,31 +18,41 @@ Install the requirements in the same Unity project:
 | [SF Core](https://github.com/huran438/sf-core) | `SFramework.Core.Runtime`; editor assembly also references `SFramework.Core.Editor` |
 | [SF Configs](https://github.com/huran438/sf-configs) | `SFramework.Configs.Runtime`; editor assembly also references `SFramework.Configs.Editor` |
 
-NodeCanvas is an external dependency. This repository does not bundle or install it. The manifest has an empty `dependencies` object; install the dependencies of SF Core and SF Configs as well, including UniTask and Newtonsoft.Json.
+NodeCanvas is an external dependency. This repository does not bundle or install it. The manifest has an empty `dependencies` object; install the dependencies of SF Core and SF Configs as well, including SF Debug, UniTask, and Newtonsoft.Json.
 
 Both package assemblies require the `NODECANVAS` scripting define symbol. Confirm that the symbol exists for the project's compilation target. Adding the symbol without the required assemblies will cause unresolved references.
 
 Your task assembly should reference `SFramework.NodeCanvas.Runtime` and `SFramework.Core.Runtime`; add `SFramework.Configs.Runtime` if the task uses configurations. Use the same `NODECANVAS` constraint for assemblies containing these tasks.
 
-The manifest declares Unity `2019.4`. That declaration does not establish compatibility with the current source and dependency versions. This README reflects static source inspection; no Unity or NodeCanvas execution accompanies it.
+The manifest declares Unity 6000.0 with SF Core and SF Configs. Install NodeCanvas and ParadoxNotion in the host project and keep their assembly definitions available.
 
-## Task initialization
+## Installation
+
+In Unity's Package Manager, choose **Add package from git URL** and enter:
+
+```text
+https://github.com/huran438/sf-nodecanvas.git#main
+```
+
+## Quick start
+
+### Task initialization
 
 The four task base classes follow the same sequence:
 
 ```text
 NodeCanvas OnInit()
   -> this.Inject() through SF Core
-  -> injected fields and properties
-  -> methods marked [SFInject], including the Init() hook
+  -> generated injection for dependency fields
+  -> ISFInjectionCallback.OnDependenciesInjected() calls Init()
   -> NodeCanvas base.OnInit()
 ```
 
 Register dependencies in the SF Core container before a graph initializes its tasks. If a task reads service data during its `Init()` hook, initialize those services before starting the graph too. With `SFContextRoot`, wait for `WaitForInitialization()` in your graph bootstrap.
 
-Use `Init()` for setup after injection. If you override `OnInit()`, call `base.OnInit()` to retain the package's injection step. The generic bases accept `T : class` and pass their agent type through to NodeCanvas.
+Declare injectable tasks as `partial` so SF Core can generate injection for mutable, nonserialized fields whose types implement `ISFDependency`. Use `Init()` for setup after injection. If you override `OnInit()`, call `base.OnInit()` to retain the package's injection step. The generic bases accept `T : class` and pass their agent type through to NodeCanvas.
 
-## Example action
+### Example action
 
 This action logs the number of configurations available from an injected `ISFConfigsService`, then completes. Save it in your runtime task assembly:
 
@@ -56,18 +60,15 @@ This action logs the number of configurations available from an injected `ISFCon
 #if NODECANVAS
 using System.Linq;
 using SFramework.Configs.Runtime;
-using SFramework.Core.Runtime;
 using SFramework.NodeCanvas.Runtime;
 using UnityEngine;
 
-public sealed class LogLoadedConfigs : SFActionTask
+public sealed partial class LogLoadedConfigs : SFActionTask
 {
-    [SFInject]
     private ISFConfigsService _configs;
 
     private int _count;
 
-    [SFInject]
     protected override void Init()
     {
         _count = _configs == null ? -1 : _configs.Configs.Count();
@@ -93,7 +94,7 @@ Register `ISFConfigsService` to `SFConfigsService` in your context's `Bind()` me
 
 For a condition, derive from `SFConditionTask` or `SFConditionTask<T>` and implement NodeCanvas' `OnCheck()` method. SF injection still takes place in `OnInit()`.
 
-## Configuration IDs
+### Configuration IDs
 
 Use `[SFIdNodeCanvas]` on a **string field** inside a task. Pass the root configuration type whose cached IDs should appear in the dropdown:
 
@@ -112,7 +113,7 @@ public sealed class EnemyCatalog : SFNodesConfig
     public override ISFConfigNode[] Children => null;
 }
 
-public sealed class LogEnemySelection : SFActionTask
+public sealed partial class LogEnemySelection : SFActionTask
 {
     [SFIdNodeCanvas(typeof(EnemyCatalog), indent: 0)]
     public string EnemyId = string.Empty;
@@ -136,7 +137,7 @@ For this root-only example, create a config JSON with `Type` first:
 }
 ```
 
-Put the file in a folder listed by `SFConfigsSettings.ConfigsPaths`, then use **Tools > SFramework > Refresh Configs**. The selector reads the shared editor cache. Place the file under Resources as well if `SFConfigsService` must load it at runtime. See [SF Configs setup](https://github.com/huran438/sf-configs#editor-workflow) for the settings file and node-tree model.
+Put the file in a folder listed by `SFConfigsSettings.ConfigsPaths`, then use **Tools > SFramework > Refresh Configs**. The selector reads the shared editor cache. Place the file under Resources as well if `SFConfigsService` must load it at runtime. See [SF Configs setup](https://github.com/huran438/sf-configs) for the settings file and node-tree model.
 
 The optional `indent` selects path depth: `0` for roots, `1` for direct children, and `-1` for the deepest cached level. The empty dropdown choice stores an empty string. A nonempty value missing from the cache stays available as a text field. The attribute stores an ID; your task must resolve that ID to application data.
 
@@ -148,13 +149,13 @@ The optional `indent` selects path depth: `0` for roots, `1` for direct children
 | `SFActionTask<T> where T : class` | Injected base for an action with a typed agent |
 | `SFConditionTask` | Injected base for an untyped NodeCanvas condition |
 | `SFConditionTask<T> where T : class` | Injected base for a condition with a typed agent |
-| `protected virtual void Init()` | `[SFInject]` setup hook on each base class |
+| `protected virtual void Init()` | Setup hook called by each base class after injection |
 | `SFIdNodeCanvasAttribute(Type, int indent = -1)` | ParadoxNotion drawer attribute with readonly `Type` and `Indent` fields |
 | `SFIdNodeCanvasAttributeDrawer` | NodeCanvas editor drawer that reads SF Configs' cached node paths |
 
 Runtime namespace: `SFramework.NodeCanvas.Runtime`. Editor namespace: `SFramework.NodeCanvas.Editor`.
 
-## Limits and troubleshooting
+## Behavior and limitations
 
 - Missing SF task types usually indicate an absent `NODECANVAS` define or unresolved assembly references. The define is a compilation gate; it does not install NodeCanvas.
 - A null injected dependency means the container did not contain the required registration when the task initialized. Injection does not wait for service initialization.
@@ -163,11 +164,22 @@ Runtime namespace: `SFramework.NodeCanvas.Runtime`. Editor namespace: `SFramewor
 - ID paths inherit SF Configs' depth and hash-set ordering behavior. The default deepest level may omit shorter branches, and no runtime ID resolver accompanies the attribute.
 - This package provides base classes and one inspector integration. It supplies no ready-made game actions, graph assets, or service registrations.
 
-## Source and related packages
+## Tests
 
-- [Action bases](Runtime/SFActionTask.cs) and [condition bases](Runtime/SFConditionTask.cs)
-- [ID attribute](Runtime/SFIdNodeCanvasAttribute.cs) and [NodeCanvas drawer](Editor/SFIdNodeCanvasAttributeDrawer.cs)
-- [Runtime assembly](Runtime/SFramework.NodeCanvas.Runtime.asmdef) and [editor assembly](Editor/SFramework.NodeCanvas.Editor.asmdef)
-- [SF Core](https://github.com/huran438/sf-core) and [SF Configs](https://github.com/huran438/sf-configs)
+Package tests are in [Tests/Editor](Tests/Editor) and use the `SFramework.NodeCanvas.Editor.Tests` assembly. Install Unity Test Framework (`com.unity.test-framework`) in the host project. Test assemblies are Editor-only and gated by `UNITY_INCLUDE_TESTS`.
 
-Source snapshot: [`8fe972aaacc7f564770a9567f6b2f430d05985b1`](https://github.com/huran438/sf-nodecanvas/commit/8fe972aaacc7f564770a9567f6b2f430d05985b1) (`main`). Example validation: static API review only; no compilation or execution in Unity.
+Add `sp.sframework.nodecanvas` to the top-level `testables` array in the host project's `Packages/manifest.json`, preserving its dependencies and any existing testable entries:
+
+```json
+{
+  "testables": ["sp.sframework.nodecanvas"]
+}
+```
+
+Open **Window > General > Test Runner**, select **EditMode**, and run `SFramework.NodeCanvas.Editor.Tests`. The `sf-demo` host enables all SFramework package tests in its manifest.
+
+The test assembly follows the `NODECANVAS` gate and requires real NodeCanvas/ParadoxNotion assemblies. Without the plugin and define, its tests are not compiled or discovered. EditMode tests do not replace graph execution, inspector interaction, or player-build validation.
+
+## License
+
+MIT. See [LICENSE.md](LICENSE.md). NodeCanvas and other dependencies retain their own licensing terms.

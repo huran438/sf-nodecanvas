@@ -1,9 +1,9 @@
-﻿using NodeCanvas.Framework;
+using NodeCanvas.Framework;
 using SFramework.Core.Runtime;
 
 namespace SFramework.NodeCanvas.Runtime
 {
-    public abstract class SFActionTask<T> : ActionTask<T>, ISFInjectable where T : class
+    public abstract partial class SFActionTask<T> : ActionTask<T>, ISFInjectable, ISFInjectionCallback where T : class
     {
         protected override string OnInit()
         {
@@ -11,14 +11,15 @@ namespace SFramework.NodeCanvas.Runtime
             return base.OnInit();
         }
 
-        [SFInject]
+        void ISFInjectionCallback.OnDependenciesInjected() => Init();
+
         protected virtual void Init()
         {
             
         }
     }
     
-    public abstract class SFActionTask : ActionTask, ISFInjectable
+    public abstract partial class SFActionTask : ActionTask, ISFInjectable, ISFInjectionCallback
     {
         protected override string OnInit()
         {
@@ -27,7 +28,8 @@ namespace SFramework.NodeCanvas.Runtime
         }
 
 
-        [SFInject]
+        void ISFInjectionCallback.OnDependenciesInjected() => Init();
+
         protected virtual void Init()
         {
             
